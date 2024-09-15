@@ -1,20 +1,17 @@
 const express = require('express');
 const app = express();
 const http = require('http');
-const server = http.createServer(app);  // Use the server instance for both HTTP and WebSockets
-const { Server } = require("socket.io");
+const server = http.createServer(app);  // Create HTTP server
+const { Server } = require("socket.io");  // Import the Socket.IO Server
 const cors = require('cors');
 
-let devices = []; 
-let socketDeviceMap = {}; 
-
-// Enable CORS
+// CORS settings
 app.use(cors({
     origin: '*',
     methods: ['GET', 'POST']
 }));
 
-// Initialize Socket.IO on the same server instance
+// Create Socket.IO server, with CORS allowed
 const io = new Server(server, {
     cors: {
         origin: "*",
@@ -22,51 +19,32 @@ const io = new Server(server, {
     }
 });
 
-// Serve the HTML file
+// Serve home.html on the root path
 app.get('/', (req, res) => {
     res.sendFile(__dirname + '/home.html');
 });
 
-// Handle Socket.IO connections
+// Socket.IO connection handler
 io.on('connection', (socket) => {
     console.log('A user connected with socket id:', socket.id);
 
-    // Handle device events
+    // Handle 'device' event
     socket.on('device', (data) => {
         const { deviceId, deviceStatus } = data;
         
-        socketDeviceMap[socket.id] = deviceId;
-
-        const existingDeviceIndex = devices.findIndex(device => device.deviceId === deviceId);
-        
-        if (existingDeviceIndex !== -1) {
-            if (devices[existingDeviceIndex].deviceStatus !== deviceStatus) {
-                devices[existingDeviceIndex].deviceStatus = deviceStatus;
-                console.log(`Updated device ID: ${deviceId} with status: ${deviceStatus}`);
-            }
-        } else {
-            devices.push({ deviceId, deviceStatus });
-            console.log(`Added new device ID: ${deviceId} with status: ${deviceStatus}`);
-        }
-
-        io.emit('update device list', devices);
+        console.log(`Received data: Device ID: ${deviceId}, Status: ${deviceStatus}`);
+        // Handle device logic here
     });
 
-    // Handle disconnect events
+    // Handle 'disconnect' event
     socket.on('disconnect', () => {
         console.log('User disconnected:', socket.id);
-        const deviceId = socketDeviceMap[socket.id];
-        if (deviceId) {
-            devices = devices.filter(device => device.deviceId !== deviceId);
-            delete socketDeviceMap[socket.id];
-            console.log(`Removed device ID: ${deviceId} from devices list`);
-            io.emit('update device list', devices);
-        }
     });
 });
 
+// Use server.listen instead of app.listen
 server.listen(3000, () => {
-    console.log('listening on *:3000');
+    console.log('Server is listening on *:3000');
 });
 
 module.exports = app;
