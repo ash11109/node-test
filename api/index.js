@@ -7,6 +7,14 @@ const { Server } = require("socket.io");
 let devices = []; 
 let socketDeviceMap = {}; 
 
+const cors = require('cors');
+
+app.use(cors({
+    origin: '*',
+    methods: ['GET', 'POST']
+}));
+
+
 const io = new Server(server, {
     cors: {
         origin: "*",
