@@ -14,6 +14,8 @@ const io = new Server(server, {
     }
 });
 
+app.get("/", (req, res) => res.send("server running"));
+
 // app.get('/', (req, res) => {
 //     res.sendFile(__dirname + '/home.html');
 // });
@@ -53,7 +55,8 @@ io.on('connection', (socket) => {
     });
 });
 
-server.listen(3000, () => {
+
+app.listen(3000, () => {
     console.log('listening on *:3000');
 });
 
@@ -61,8 +64,6 @@ server.listen(3000, () => {
 // const express = require("express");
 // const app = express();
 
-app.get("/", (req, res) => res.send("server running"));
-
 // app.listen(3000, () => console.log("Server ready on port 3000."));
 
-module.exports = server;
+module.exports = app;
