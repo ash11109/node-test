@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Connected Devices</title>
+</head>
+<body>
+    <h1>Connected Devices</h1>
+    <table border="1" id="deviceTable">
+        <thead>
+            <tr>
+                <th>Device ID</th>
+                <th>Status</th>
+            </tr>
+        </thead>
+        <tbody>
+        </tbody>
+    </table>
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+        var socket = io();
+
+        socket.on('update device list', function(devices) {
+            var tbody = document.querySelector('#deviceTable tbody');
+            tbody.innerHTML = '';
+            devices.forEach(function(device) {
+                var row = document.createElement('tr');
+                var deviceIdCell = document.createElement('td');
+                deviceIdCell.textContent = device.deviceId;
+                var statusCell = document.createElement('td');
+                statusCell.textContent = device.deviceStatus;
+                row.appendChild(deviceIdCell);
+                row.appendChild(statusCell);
+                tbody.appendChild(row);
+            });
+        });
+
+    </script>
+</body>
+</html>
