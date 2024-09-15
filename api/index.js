@@ -14,9 +14,9 @@ const io = new Server(server, {
     }
 });
 
-app.get('/', (req, res) => {
-    res.sendFile(__dirname + '/home.html');
-});
+// app.get('/', (req, res) => {
+//     res.sendFile(__dirname + '/home.html');
+// });
 
 io.on('connection', (socket) => {
     console.log('A user connected with socket id:', socket.id);
@@ -61,7 +61,7 @@ server.listen(3000, () => {
 // const express = require("express");
 // const app = express();
 
-// app.get("/", (req, res) => res.send("server running"));
+app.get("/", (req, res) => res.send("server running"));
 
 // app.listen(3000, () => console.log("Server ready on port 3000."));
 
